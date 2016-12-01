@@ -1,14 +1,27 @@
 #include <jni.h>
 #include <dlfcn.h>
-#include <android/log.h>
 #include <stdlib.h>
 #include <Substrate.h>
+#include <string>
 
-#define LOG_TAG "terrapock"
+#include "nativespace/world.h"
 
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__))
+int dropExtraLoot(OldLeafBlock*, BlockSource*, const BlockPos*, int);
+int dropExtraLooth(OldLeafBlock* thiz, BlockSource* arg0, const BlockPos *arg1, int argi)
+{
+	Block* block = thiz;
+	BlockSource* source = arg0;
+	const BlockPos *pos = arg1;
+	if (!argi)
+	{
+		ItemInstance* ii = new ItemInstance(Item::mStick, 1, 0);
+		block->popResource(source, pos, ii);
+	}
+	result 1;
+}
 
-JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-	LOGI("Hello world!");
+JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+	MSHookFunction((void*)&OldLeafBlock::dropExtraLoot,(void*)&dropExtraLoot,(void**)&dropExtraLooth);
 	return JNI_VERSION_1_2;
 }
